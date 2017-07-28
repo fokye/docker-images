@@ -10,7 +10,7 @@ SCRIPTS_DIR=$(cd "$(dirname "$0")"; pwd)
 BASE_DIR=$(dirname "${SCRIPTS_DIR}")
 IMAGES_DIR=${BASE_DIR}/images
 
-if [ -z "${IMAGE_NAME}" ]; then
+if [ -z "${IMAGE_NAME}" -o ! -d "${IMAGES_DIR}/${IMAGE_NAME}" ]; then
   echo "Usage: $0 <image-name> [<image-version>]"
   echo "Available images:"
   (
@@ -25,4 +25,19 @@ fi
 
 [ -z "${IMAGE_VERSION}" ] && IMAGE_VERSION=latest
 
-docker build -t "${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_VERSION}" "${IMAGES_DIR}/${IMAGE_NAME}"
+IMAGE_REF=${IMAGE_REPO}/${IMAGE_NAME}:${IMAGE_VERSION}
+IMAGE_DIR=${IMAGES_DIR}/${IMAGE_NAME}/${IMAGE_VERSION}
+
+if [ ! -d "${IMAGE_DIR}" ]; then
+  echo "Invalid version for ${IMAGE_NAME}: ${IMAGE_VERSION}"
+  echo "Available versions:"
+  (
+    cd "${IMAGES_DIR}/${IMAGE_NAME}"
+    for image_version in *; do
+      echo " * ${image_version}"
+    done
+  )
+  exit 1
+fi
+
+docker build -t "${IMAGE_REF}" "${IMAGE_DIR}"
