@@ -8,7 +8,7 @@ IMAGE_VERSION=$2
 
 SCRIPTS_DIR=$(cd "$(dirname "$0")"; pwd)
 BASE_DIR=$(dirname "${SCRIPTS_DIR}")
-IMAGES_DIR=${BASE_DIR}/images
+IMAGES_DIR=${BASE_DIR}/images/phryg1an
 
 if [ -z "${IMAGE_NAME}" -o ! -d "${IMAGES_DIR}/${IMAGE_NAME}" ]; then
   echo "Usage: $0 <image-name> [<image-version>]"
